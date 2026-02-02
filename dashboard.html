@@ -1,82 +1,46 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>لوحة التحكم | DZ-TRAFFIC</title>
+    <meta charset="UTF-8"><title>لوحة التحكم | DZ-TRAFFIC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body class="bg-gray-50">
     <nav class="bg-white p-4 shadow-sm flex justify-between items-center">
-        <h2 class="text-xl font-bold text-blue-600 italic">DZ-TRAFFIC</h2>
-        <div class="bg-yellow-100 text-yellow-800 px-4 py-1 rounded-full font-bold">
-            رصيدك: <span id="userPoints">0</span> 🪙
-        </div>
+        <h2 class="text-xl font-bold text-blue-600 italic font-black">DZ-TRAFFIC</h2>
+        <div class="bg-yellow-100 text-yellow-800 px-4 py-1 rounded-full font-bold">رصيدك: <span id="userPoints">0</span> 🪙</div>
     </nav>
-
-    <div class="max-w-md mx-auto p-6">
-        <h3 class="font-bold mb-4 text-gray-700">المهام المتوفرة:</h3>
-        <div id="adsList" class="space-y-3">
-            </div>
-    </div>
-
+    <div class="max-w-md mx-auto p-6" id="adsList"></div>
     <script>
-        const SUPABASE_URL = "https://nbioqaxgjzpyrbcwdkds.supabase.co";
-        const SUPABASE_KEY = "ضـع_مـفـتـاح_ANON_الـخ_اص_بـك_هـنـا";
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        const _supabase = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9");
         async function init() {
             const { data: { user } } = await _supabase.auth.getUser();
-            if (!user) window.location.href = "index.html";
-
-            // جلب رصيد المستخدم
             const { data: profile } = await _supabase.from('profiles').select('points').eq('id', user.id).single();
             document.getElementById('userPoints').innerText = profile?.points || 0;
-
-            // جلب الإعلانات من الجدول الذي أعددته
-            const { data: ads } = await _supabase.from('ads').select('*');
-            const list = document.getElementById('adsList');
-            
+            const { data: ads } = await _supabase.from('ads').select('*'); // جلب البيانات من جدولك الجديد
             ads.forEach(ad => {
                 const item = document.createElement('div');
-                item.className = "bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center border border-gray-100";
-                item.innerHTML = `
-                    <div>
-                        <p class="font-bold text-gray-800">${ad.title}</p>
-                        <p class="text-xs text-gray-400">${ad.required_time} ثانية</p>
-                    </div>
-                    <button onclick="startTask('${ad.url}', ${ad.id}, ${ad.reward_points}, ${ad.required_time})" 
-                            id="btn-${ad.id}" 
-                            class="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold shadow-md hover:bg-blue-700 transition">
-                        +${ad.reward_points}
-                    </button>
-                `;
-                list.appendChild(item);
+                item.className = "bg-white p-4 rounded-2xl shadow mb-3 flex justify-between items-center";
+                item.innerHTML = `<div><p class="font-bold">${ad.title}</p><p class="text-xs text-gray-400">${ad.required_time} ثانية</p></div>
+                    <button onclick="startTask('${ad.url}', ${ad.id}, ${ad.reward_points}, ${ad.required_time})" id="btn-${ad.id}" class="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold">+${ad.reward_points}</button>`;
+                document.getElementById('adsList').appendChild(item);
             });
         }
-
         function startTask(url, id, reward, time) {
             window.open(url, '_blank');
             let timeLeft = time;
             const btn = document.getElementById(`btn-${id}`);
             btn.disabled = true;
-
             const timer = setInterval(async () => {
-                btn.innerText = `${timeLeft}ث`;
-                if (timeLeft-- <= 0) {
+                btn.innerText = `${timeLeft--}ث`;
+                if (timeLeft < 0) {
                     clearInterval(timer);
-                    btn.innerText = "جاري الحفظ...";
                     const { data: { user } } = await _supabase.auth.getUser();
-                    
-                    // تشغيل الدالة لزيادة النقاط
-                    await _supabase.rpc('increment_points', { user_id: user.id, row_points: reward });
-                    
-                    alert(`مبروك! ربحت ${reward} نقطة`);
+                    await _supabase.rpc('increment_points', { user_id: user.id, row_points: reward }); // تشغيل محرك النقاط
                     location.reload();
                 }
             }, 1000);
         }
-
         init();
     </script>
 </body>
