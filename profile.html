@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8"><title>تفعيل الحساب | DZ-TRAFFIC</title>
+    <meta charset="UTF-8"><title>تفعيل الهدية | DZ-TRAFFIC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body class="bg-blue-50 flex items-center justify-center min-h-screen">
     <div class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md">
-        <h2 class="text-2xl font-bold text-center mb-6 text-blue-600 font-black">مبروك! استلم 10,000 نقطة 🎁</h2>
+        <h2 class="text-2xl font-bold text-center mb-6 text-blue-600">مبروك! استلم 10,000 نقطة 🎁</h2>
         <form id="profileForm" class="space-y-4">
             <input type="text" id="username" placeholder="اسم المستخدم" class="w-full p-4 border rounded-2xl outline-none" required>
             <input type="tel" id="phone" placeholder="رقم الهاتف" class="w-full p-4 border rounded-2xl outline-none" required>
@@ -18,16 +18,20 @@
         const _supabase = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9");
         document.getElementById('profileForm').onsubmit = async (e) => {
             e.preventDefault();
-            if (localStorage.getItem('dz_registered')) return alert("هذا الجهاز مسجل بالفعل!");
+            if (localStorage.getItem('dz_registered')) return alert("عذراً، هذا الجهاز مسجل مسبقاً!");
+            
             const { data: { user } } = await _supabase.auth.getUser();
             const { error } = await _supabase.from('profiles').upsert({
-                id: user.id, username: document.getElementById('username').value,
-                phone: document.getElementById('phone').value, points: 10000 
+                id: user.id, 
+                username: document.getElementById('username').value,
+                phone: document.getElementById('phone').value, 
+                points: 10000 
             });
+
             if (!error) {
                 localStorage.setItem('dz_registered', 'true');
                 window.location.href = "dashboard.html";
-            } else { alert("حدث خطأ في التسجيل"); }
+            } else { alert("حدث خطأ أثناء تفعيل الهدية."); }
         };
     </script>
 </body>
