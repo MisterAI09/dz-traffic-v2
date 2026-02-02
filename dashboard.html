@@ -7,25 +7,31 @@
 </head>
 <body class="bg-gray-50">
     <nav class="bg-white p-4 shadow-sm flex justify-between items-center">
-        <h2 class="text-xl font-bold text-blue-600 italic font-black">DZ-TRAFFIC</h2>
-        <div class="bg-yellow-100 text-yellow-800 px-4 py-1 rounded-full font-bold">رصيدك: <span id="userPoints">0</span> 🪙</div>
+        <h2 class="text-xl font-black text-blue-600">DZ-TRAFFIC</h2>
+        <div class="bg-yellow-100 text-yellow-800 px-4 py-1 rounded-full font-bold text-lg">
+            رصيدك: <span id="userPoints">0</span> 🪙
+        </div>
     </nav>
     <div class="max-w-md mx-auto p-6" id="adsList"></div>
+
     <script>
         const _supabase = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9");
         async function init() {
             const { data: { user } } = await _supabase.auth.getUser();
             const { data: profile } = await _supabase.from('profiles').select('points').eq('id', user.id).single();
             document.getElementById('userPoints').innerText = profile?.points || 0;
-            const { data: ads } = await _supabase.from('ads').select('*'); // جلب البيانات من جدولك الجديد
+
+            const { data: ads } = await _supabase.from('ads').select('*');
+            const container = document.getElementById('adsList');
             ads.forEach(ad => {
                 const item = document.createElement('div');
-                item.className = "bg-white p-4 rounded-2xl shadow mb-3 flex justify-between items-center";
+                item.className = "bg-white p-4 rounded-2xl shadow mb-3 flex justify-between items-center border border-gray-100";
                 item.innerHTML = `<div><p class="font-bold">${ad.title}</p><p class="text-xs text-gray-400">${ad.required_time} ثانية</p></div>
                     <button onclick="startTask('${ad.url}', ${ad.id}, ${ad.reward_points}, ${ad.required_time})" id="btn-${ad.id}" class="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold">+${ad.reward_points}</button>`;
-                document.getElementById('adsList').appendChild(item);
+                container.appendChild(item);
             });
         }
+
         function startTask(url, id, reward, time) {
             window.open(url, '_blank');
             let timeLeft = time;
@@ -36,7 +42,7 @@
                 if (timeLeft < 0) {
                     clearInterval(timer);
                     const { data: { user } } = await _supabase.auth.getUser();
-                    await _supabase.rpc('increment_points', { user_id: user.id, row_points: reward }); // تشغيل محرك النقاط
+                    await _supabase.rpc('increment_points', { user_id: user.id, row_points: reward });
                     location.reload();
                 }
             }, 1000);
