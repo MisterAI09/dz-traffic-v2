@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DZ-TRAFFIC | دخول</title>
+    <meta charset="UTF-8"><title>DZ-TRAFFIC | دخول</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
@@ -11,26 +9,16 @@
     <div class="bg-white p-10 rounded-3xl shadow-2xl text-center max-w-sm w-full border-t-8 border-blue-600">
         <h1 class="text-4xl font-black text-blue-600 mb-2 italic">DZ-TRAFFIC</h1>
         <p class="text-gray-500 mb-8 font-medium">سجل الآن واستلم 10,000 نقطة هدية! 🎁</p>
-        
-        <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 py-3 rounded-2xl font-bold hover:bg-gray-50 transition shadow-sm">
-            <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-6" alt="Google">
-            الدخول عبر جوجل
+        <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 py-3 rounded-2xl font-bold shadow-sm hover:bg-gray-50 transition">
+            <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-6"> الدخول عبر جوجل
         </button>
     </div>
-
     <script>
-        // ضع مفاتيحك هنا من إعدادات Supabase API
-        const SUPABASE_URL = "https://nbioqaxgjzpyrbcwdkds.supabase.co"; 
-        const SUPABASE_KEY = "ضـع_مـفـتـاح_ANON_الـخـاص_بـك_هـنـا";
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        const _supabase = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9"); // تم وضع المفتاح من صورتك
         async function loginWithGoogle() {
             await _supabase.auth.signInWithOAuth({
                 provider: 'google',
-                options: { 
-                    // تأكد أن هذا الرابط مضاف في إعدادات Supabase و Google Cloud
-                    redirectTo: 'https://dz-traffic-v2.vercel.app/profile.html' 
-                }
+                options: { redirectTo: 'https://dz-traffic-v2.vercel.app/profile.html' }
             });
         }
     </script>
