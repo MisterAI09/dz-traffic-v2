@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>جاري التحقق...</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script></head>
+<body style="background:#f8fafc; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif; color:#666;">
+    <div style="text-align:center;"><p>جاري فحص الحساب، لحظة واحدة...</p></div>
+    <script>
+        const _supabase = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9");
+        async function check() {
+            const { data: { user } } = await _supabase.auth.getUser();
+            if (!user) return window.location.href = 'index.html';
+            const { data: profile } = await _supabase.from('profiles').select('id').eq('id', user.id).single();
+            window.location.href = profile ? 'dashboard.html' : 'profile.html';
+        }
+        check();
+    </script>
+</body>
+</html>
