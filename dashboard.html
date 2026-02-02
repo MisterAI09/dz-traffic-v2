@@ -1,48 +1,86 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8"><title>لوحة التحكم | DZ-TRAFFIC</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | DZ-TRAFFIC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Tajawal', sans-serif; }</style>
 </head>
-<body class="bg-gray-50">
-    <nav class="bg-white p-4 shadow-sm flex justify-between items-center">
-        <h2 class="text-xl font-black text-blue-600">DZ-TRAFFIC</h2>
-        <div class="bg-yellow-100 text-yellow-800 px-4 py-1 rounded-full font-bold text-lg">
-            رصيدك: <span id="userPoints">0</span> 🪙
-        </div>
+<body class="bg-slate-100 pb-10 text-right">
+    <nav class="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-50 border-b border-blue-100">
+        <h2 class="font-black text-blue-600 italic">DZ-TRAFFIC</h2>
+        <div class="bg-yellow-400 text-white px-4 py-1 rounded-full font-bold shadow-sm ring-2 ring-white">🪙 <span id="balance">0</span></div>
     </nav>
-    <div class="max-w-md mx-auto p-6" id="adsList"></div>
+
+    <div class="max-w-md mx-auto p-4 space-y-6">
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-white">
+            <h3 class="font-black mb-3 text-gray-800">🚀 انشر رابطك (تليجرام، يوتيوب...)</h3>
+            <select id="pType" class="w-full p-3 bg-gray-50 border rounded-xl mb-2 text-xs font-bold outline-none">
+                <option value="📢 تليجرام">📢 تليجرام</option>
+                <option value="📺 يوتيوب">📺 يوتيوب</option>
+                <option value="🌐 موقع">🌐 موقع إلكتروني</option>
+                <option value="📸 إنستغرام">📸 إنستغرام</option>
+            </select>
+            <input type="text" id="aTitle" placeholder="عنوان الإعلان" class="w-full p-3 border rounded-xl mb-2 text-xs outline-none">
+            <input type="url" id="aUrl" placeholder="ضع الرابط هنا" class="w-full p-3 border rounded-xl mb-3 text-xs outline-none">
+            <button onclick="addAd()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-black text-sm shadow-lg active:scale-95 transition">نشر الإعلان (-2000 نقطة)</button>
+        </div>
+
+        <div id="adsList" class="space-y-3">
+            <h3 class="font-black text-gray-700 px-2 flex justify-between items-center">
+                <span>تجميع النقاط 🔥</span>
+                <span class="text-[9px] bg-blue-100 text-blue-600 px-2 py-1 rounded">زيارات حقيقية</span>
+            </h3>
+            </div>
+
+        <a href="https://t.me/MouzaiaDelivery" target="_blank" class="block bg-sky-500 text-white text-center py-4 rounded-2xl font-black shadow-lg hover:bg-sky-600 transition">اتصل بنا على تليجرام 💬</a>
+    </div>
 
     <script>
-        const _supabase = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9");
-        async function init() {
-            const { data: { user } } = await _supabase.auth.getUser();
-            const { data: profile } = await _supabase.from('profiles').select('points').eq('id', user.id).single();
-            document.getElementById('userPoints').innerText = profile?.points || 0;
+        const _s = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9");
 
-            const { data: ads } = await _supabase.from('ads').select('*');
-            const container = document.getElementById('adsList');
+        async function init() {
+            const { data: { user } } = await _s.auth.getUser();
+            if(!user) return window.location.href="index.html";
+
+            const { data: p } = await _s.from('profiles').select('points').eq('id', user.id).single();
+            document.getElementById('balance').innerText = (p?.points || 0).toLocaleString();
+
+            const { data: ads } = await _s.from('ads').select('*').order('id', {ascending: false});
+            const list = document.getElementById('adsList');
             ads.forEach(ad => {
-                const item = document.createElement('div');
-                item.className = "bg-white p-4 rounded-2xl shadow mb-3 flex justify-between items-center border border-gray-100";
-                item.innerHTML = `<div><p class="font-bold">${ad.title}</p><p class="text-xs text-gray-400">${ad.required_time} ثانية</p></div>
-                    <button onclick="startTask('${ad.url}', ${ad.id}, ${ad.reward_points}, ${ad.required_time})" id="btn-${ad.id}" class="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold">+${ad.reward_points}</button>`;
-                container.appendChild(item);
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-gray-50 hover:border-blue-200 transition";
+                div.innerHTML = `<div class="text-right"><p class="font-black text-xs text-gray-700">${ad.title}</p><p class="text-[9px] text-gray-400 font-bold">⏱️ ${ad.required_time} ثانية</p></div>
+                    <button onclick="go('${ad.url}', ${ad.id}, ${ad.reward_points}, ${ad.required_time})" id="b-${ad.id}" class="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold text-xs shadow-sm">+${ad.reward_points}</button>`;
+                list.appendChild(div);
             });
         }
 
-        function startTask(url, id, reward, time) {
-            window.open(url, '_blank');
-            let timeLeft = time;
-            const btn = document.getElementById(`btn-${id}`);
-            btn.disabled = true;
+        async function addAd() {
+            const { data: { user } } = await _s.auth.getUser();
+            const { error } = await _s.from('ads').insert({ 
+                title: document.getElementById('pType').value + ": " + document.getElementById('aTitle').value, 
+                url: document.getElementById('aUrl').value, 
+                reward_points: 50, required_time: 15 
+            });
+            if (!error) {
+                await _s.rpc('increment_points', { user_id: user.id, row_points: -2000 });
+                alert("تم نشر إعلانك!"); location.reload();
+            }
+        }
+
+        function go(u, id, r, t) {
+            window.open(u, '_blank');
+            let s = t; const btn = document.getElementById(`b-${id}`); btn.disabled = true;
             const timer = setInterval(async () => {
-                btn.innerText = `${timeLeft--}ث`;
-                if (timeLeft < 0) {
+                btn.innerText = `${s--}ث`;
+                if (s < 0) {
                     clearInterval(timer);
-                    const { data: { user } } = await _supabase.auth.getUser();
-                    await _supabase.rpc('increment_points', { user_id: user.id, row_points: reward });
+                    const { data: { user } } = await _s.auth.getUser();
+                    await _s.rpc('increment_points', { user_id: user.id, row_points: r });
                     location.reload();
                 }
             }, 1000);
