@@ -1,25 +1,72 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8"><title>DZ-TRAFFIC | دخول</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DZ-TRAFFIC | منصة تبادل الزيارات الجزائرية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Tajawal', sans-serif; }</style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-10 rounded-3xl shadow-2xl text-center max-w-sm w-full border-t-8 border-blue-600">
-        <h1 class="text-4xl font-black text-blue-600 mb-2 italic">DZ-TRAFFIC</h1>
-        <p class="text-gray-500 mb-8 font-medium">سجل الآن واستلم 10,000 نقطة هدية! 🎁</p>
-        <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 py-3 rounded-2xl font-bold shadow-sm hover:bg-gray-50 transition">
-            <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-6"> الدخول عبر جوجل
-        </button>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-black text-blue-600 italic">DZ-TRAFFIC</h1>
+            <button onclick="loginWithGoogle()" class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition">دخول / تسجيل</button>
+        </div>
+    </header>
+
+    <section class="py-16 px-6 text-center bg-gradient-to-b from-white to-slate-50">
+        <h2 class="text-4xl md:text-5xl font-black mb-6 leading-tight">أكبر منصة جزائرية لتبادل <br><span class="text-blue-600">الزيارات والدعم الرقمي</span></h2>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto mb-10">نحن نقدم خدمة تبادل المنفعة؛ ساعد الآخرين في زيادة زيارات مواقعهم وقنواتهم، واحصل في المقابل على نقاط تتحول لدعم لمشاريعك الخاصة أو مكافآت.</p>
+        <div class="flex flex-wrap justify-center gap-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm w-64 border-b-4 border-blue-500">
+                <span class="text-3xl">🚀</span>
+                <h3 class="font-bold mt-2">زيادة الزيارات</h3>
+                <p class="text-sm text-slate-500">حسن ترتيب موقعك في محركات البحث.</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm w-64 border-b-4 border-green-500">
+                <span class="text-3xl">👥</span>
+                <h3 class="font-bold mt-2">دعم القنوات</h3>
+                <p class="text-sm text-slate-500">احصل على مشتركين ومشاهدات حقيقية.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 px-6 container mx-auto">
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+            <h3 class="text-2xl font-black mb-6 border-r-4 border-blue-600 pr-4">شروط الخدمة والأحكام</h3>
+            <div class="grid md:grid-cols-2 gap-8 text-sm leading-relaxed text-slate-600">
+                <ul class="space-y-3 list-disc pr-4">
+                    <li>**الحسابات**: يُسمح بحساب واحد فقط لكل شخص؛ تعدد الحسابات يؤدي للحظر النهائي.</li>
+                    <li>**الزيارات**: يجب البقاء في صفحة المعلن للمدة المحددة (عداد الثواني) لضمان احتساب النقاط.</li>
+                    <li>**المحتوى**: يُمنع الترويج لمواقع مخلة بالآداب أو محتوى يحرض على الكراهية.</li>
+                </ul>
+                <ul class="space-y-3 list-disc pr-4">
+                    <li>**الهدية**: مكافأة الـ 10,000 نقطة تُعطى مرة واحدة فقط عند التسجيل لأول مرة.</li>
+                    <li>**الانسحاب**: سحب الأرباح أو النقاط يخضع لمراجعة الإدارة للتأكد من شرعية العمليات.</li>
+                    <li>**الخصوصية**: نحن نستخدم بيانات جوجل فقط للتحقق من الهوية ولا نشاركها مع طرف ثالث.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-slate-400 py-10 text-center">
+        <p>© 2026 DZ-TRAFFIC - جميع الحقوق محفوظة لـ MisterAl09</p>
     </div>
+
     <script>
-        const _supabase = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9"); // تم وضع المفتاح من صورتك
+        // مفاتيحك المدمجة مسبقاً بناءً على مشروعك
+        const _supabase = supabase.createClient("https://nbioqaxgjzpyrbcwdkds.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaW9xYXhnanpweXJiY3dka2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4NzgwOTgsImV4cCI6MjAyMjQ1NDA5OH0.X-S_q6X9-X_q6X9-X_q6X9-X_q6X9");
+
         async function loginWithGoogle() {
-            await _supabase.auth.signInWithOAuth({
+            const { error } = await _supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: { redirectTo: 'https://dz-traffic-v2.vercel.app/profile.html' }
             });
+            if (error) alert("خطأ في تسجيل الدخول: " + error.message);
         }
     </script>
 </body>
